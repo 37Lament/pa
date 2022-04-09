@@ -50,13 +50,10 @@ func Spider()(title, content string, err error) {
 		return
 	}
 	// 提取 title
-	// 有两处，取第一处
 	tmpTitle := ret1.FindAllStringSubmatch(result, 1)
 	for _, data := range tmpTitle {
-		// 存至返回值 title
 		title = data[1]
 		title = strings.Replace(title, "\t", "", -1)
-		// 取一个即可。
 		break
 	}
 
@@ -69,7 +66,6 @@ func Spider()(title, content string, err error) {
 	// 提取 Content
 	tmpContent := ret2.FindAllStringSubmatch(result, -1)
 	for _, data := range tmpContent {
-		// 存至返回值 content
 		content = data[1]
 		content = strings.Replace(content, "\t", "", -1)
 		break
