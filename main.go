@@ -10,7 +10,20 @@ import (
 )
 
 var client http.Client//构造客户端
-
+//rows, err := dB.Query("SELECT  id ,username, time, txt FROM user WHERE id LIKE ?", userid)
+//	if err != nil {
+//		return nil, err
+//	}
+//	defer rows.Close()
+//
+//	for rows.Next() {
+//		var user Miniuser
+//		err := rows.Scan(&user.Id,&user.Username,&user.Time,&user.Txt)
+//		if err != nil {
+//			return nil, err
+//		}
+//		Users = append(Users, user)
+//	}
 func main() {
 	var titles []string
 	var contents []string
@@ -29,8 +42,6 @@ func Spider()(title, content string, err error) {
 		fmt.Println("Get err",err)
 		return
 	}
-	//解析、编译正则表达式， 处理 title
-	// <a href="https://m.pengfue.com/content/1857797/" title="标题">
 	//<h2 class="titleview">那天去公园儿，看见一个...</h2>
 	//<h2 class="titleview">=(?s:(.*?))</h2>
 	ret1 := regexp.MustCompile(`<h2 class="titleview">=(?s:(.*?))</h2>`)
@@ -49,10 +60,8 @@ func Spider()(title, content string, err error) {
 		break
 	}
 
-	//解析、编译正则表达式， 处理 content
-	// `<div class="con-txt">正文内容</div>`
 	//<p align="center"></p><!--listS-->(?s:(.*?))<!--listE-->
-	ret2 := regexp.MustCompile(`<p align="center"></p><!--listS-->(?s:(.*?))<!--listE-->`)
+	ret2 := regexp.MustCompile(`<p align="center"></p><!--listS-->(?s:(.*?))<!--listE--><span id="KL_show_next_list"></span>`)
 	if ret2 == nil {
 		err = fmt.Errorf("%s", "MustCompile err")
 		return
@@ -63,7 +72,6 @@ func Spider()(title, content string, err error) {
 		// 存至返回值 content
 		content = data[1]
 		content = strings.Replace(content, "\t", "", -1)
-		// 提取一个即可。
 		break
 	}
 	return
@@ -117,7 +125,7 @@ func SaveJoke2File(idx int, fileTitle, fileContent []string) {
 		f.WriteString(fileTitle[i] + "\n")
 		// 写入内容
 		f.WriteString(fileContent[i] + "\n")
-		// 写一个华丽分割线
+
 		f.WriteString("--------------------------------------------------------------\n")
 	}
 }
